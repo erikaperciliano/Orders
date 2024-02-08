@@ -1,4 +1,4 @@
-# Dashboard 🗯️
+# ORDERS 🗯️
 This is an ordering app. 🚀 <br />
 # Proposal 🔥
 The user will be able to place an order, delete order and add as many products as desired. When placing the order, the establishment will receive the order on your WhatsApp.
