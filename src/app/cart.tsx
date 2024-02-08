@@ -8,12 +8,18 @@ import { Product } from "@/components/product";
 import { ProductCartProps, useCartStore } from "@/stores/cart-store";
 import { formatCurrency } from "@/utils/functions/format-cuttency";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "expo-router";
+import { useState } from "react";
 
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, Linking, ScrollView, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
+const PHONE_NUMBER = "351999999999"
+
 export default function Cart(){
+    const [address, setAdress] = useState('')
     const cartStore = useCartStore()
+    const navigation = useNavigation()
 
     const total = formatCurrency(cartStore.products.reduce((total, product) => total + product.price * product.quantity, 0))
 
@@ -27,6 +33,29 @@ export default function Cart(){
                 onPress: () => cartStore.remove(product.id)
             }
         ])
+    }
+
+    function handleOrder(){
+        if(address.trim().length === 0) {
+            return Alert.alert('Order', 'Enter delivery details.')
+        }
+
+        const products = cartStore.products.map((product) => `\n ${product.quantity} ${product.title}`)
+        .join('')
+
+        const message = `
+        🍔 NEW ORDER
+        \n Deliver to: ${address}
+
+        ${products}
+ 
+        \n Amount:${total}
+        `
+
+        Linking.openURL(`http://api.whatsapp.com/send?phone=${PHONE_NUMBER}&text=${message}`)
+        cartStore.clear()
+        navigation.goBack()
+
     }
 
     return(
@@ -56,13 +85,19 @@ export default function Cart(){
                             <Text className="text-lime-400 text-2xl font-heading">{total}</Text>
                         </View>
 
-                        <Input placeholder="Enter the delivery address with street, zip code, number and complement..."/>
+                        <Input 
+                            placeholder="Enter the delivery address with street, zip code, number and complement..." 
+                            onChangeText={setAdress}
+                            blurOnSubmit={true}
+                            onSubmitEditing={handleOrder}
+                            returnKeyType="next"
+                        />
                     </View>
                 </ScrollView>
             </KeyboardAwareScrollView>
 
             <View className="p-5 gap-5">
-                <Button>
+                <Button onPress={handleOrder}>
                     <Button.Text>Send request</Button.Text>
                     <Button.Icon>
                         <Feather name="arrow-right-circle" size={20}/>
