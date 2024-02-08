@@ -9,6 +9,7 @@ export type ProductCartProps = ProductProps & {
 type StateProps = {
     products: ProductCartProps[]
     add: (product: ProductProps) => void
+    remove: (productId: string) => void
 }
 
 // will be used to save and share content throughout the application
@@ -16,5 +17,8 @@ export const useCartStore = create<StateProps>((set) => ({
     products: [],
     add: (product: ProductProps) => set((state) => ({
         products: cartInMemory.add(state.products, product)
+    })),
+    remove: (productId: string) => set((state) => ({
+        products: cartInMemory.remove(state.products, productId)
     }))
 }))
