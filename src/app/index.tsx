@@ -4,6 +4,7 @@ import { View, FlatList, SectionList, Text } from 'react-native'
 import { CATEGORIES, MENU } from '@/utils/data/products'
 import { useState, useRef } from 'react'
 import { Product } from '@/components/product'
+import { Link } from 'expo-router'
 
 export default function Home() {
   const [category, setCategory] = useState(CATEGORIES[0])
@@ -50,7 +51,9 @@ export default function Home() {
         keyExtractor={(item) => item.id}
         stickySectionHeadersEnabled={false}
         renderItem={({ item }) => (
-          <Product data={item}/>
+          <Link href={`/product/${item.id}`} asChild>
+            <Product data={item} />
+          </Link>
         )}
         className='flex-1 p-5'
         showsVerticalScrollIndicator={false}
